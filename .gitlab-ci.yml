@@ -6,6 +6,7 @@ stages:
   - apply
 
 before_script:
+  - cd terraform
   - terraform init
 
 validate:
