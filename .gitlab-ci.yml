@@ -1,0 +1,158 @@
+stages:
+  - validate
+  - plan
+  - provision
+  - deploy
+  - test
+  - cleanup
+
+variables:
+  TF_ROOT: "terraform"
+
+############################
+# VALIDATE STAGE
+############################
+
+terraform_validate:
+  stage: validate
+  image: hashicorp/terraform:latest
+  script:
+    - cd $TF_ROOT
+    - terraform init -input=false
+    - terraform validate
+    - terraform fmt -check
+
+terraform_lint:
+  stage: validate
+  image: ghcr.io/terraform-linters/tflint:latest
+  script:
+    - cd $TF_ROOT
+    - tflint
+
+docker_validate:
+  stage: validate
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker compose config
+
+############################
+# PLAN STAGE
+############################
+
+terraform_plan:
+  stage: plan
+  image: hashicorp/terraform:latest
+  script:
+    - cd $TF_ROOT
+    - terraform init -input=false
+    - terraform plan -var="region=$AWS_DEFAULT_REGION" -out=tfplan
+  artifacts:
+    paths:
+      - terraform/tfplan
+
+############################
+# PROVISION STAGE (MANUAL)
+############################
+
+terraform_apply:
+  stage: provision
+  image: hashicorp/terraform:latest
+  when: manual
+  script:
+    - cd $TF_ROOT
+    - terraform init -input=false
+    - terraform apply -var="region=$AWS_DEFAULT_REGION" -auto-approve
+    - terraform output -raw instance_public_ip > server_ip.txt
+    - terraform output -raw private_key_pem > ssh_key.pem
+  artifacts:
+    paths:
+      - terraform/server_ip.txt
+      - terraform/ssh_key.pem
+
+############################
+# DEPLOY STAGE
+############################
+
+deploy_directus:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - terraform_apply
+  before_script:
+    - apk add --no-cache openssh-client curl bash
+  script:
+    - cd terraform
+    - chmod 600 ssh_key.pem
+    - SERVER_IP=$(cat server_ip.txt)
+
+    # Wait for SSH to be ready
+    - echo "Waiting for SSH..."
+    - sleep 60
+
+    # Copy docker-compose file
+    - scp -o StrictHostKeyChecking=no -i ssh_key.pem ../docker-compose.yml ubuntu@$SERVER_IP:/home/ubuntu/
+
+    # Create .env file on server
+    - |
+      ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@$SERVER_IP << EOF
+      echo "ADMIN_EMAIL=$ADMIN_EMAIL" > .env
+      echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
+      echo "DB_PASSWORD=$DB_PASSWORD" >> .env
+      echo "DIRECTUS_SECRET=$DIRECTUS_SECRET" >> .env
+      docker compose up -d
+      EOF
+
+############################
+# TEST STAGE
+############################
+
+health_check:
+  stage: test
+  image: curlimages/curl:latest
+  dependencies:
+    - terraform_apply
+  script:
+    - SERVER_IP=$(cat terraform/server_ip.txt)
+    - sleep 30
+    - curl -f http://$SERVER_IP:8055
+
+capture_homepage:
+  stage: test
+  image: curlimages/curl:latest
+  dependencies:
+    - terraform_apply
+  script:
+    - SERVER_IP=$(cat terraform/server_ip.txt)
+    - curl http://$SERVER_IP:8055 -o directus_homepage.html
+  artifacts:
+    paths:
+      - directus_homepage.html
+
+generate_report:
+  stage: test
+  image: alpine:latest
+  dependencies:
+    - terraform_apply
+  script:
+    - SERVER_IP=$(cat terraform/server_ip.txt)
+    - echo "# Deployment Report" > deployment_report.md
+    - echo "Server IP: $SERVER_IP" >> deployment_report.md
+    - echo "Directus URL: http://$SERVER_IP:8055" >> deployment_report.md
+  artifacts:
+    paths:
+      - deployment_report.md
+
+############################
+# CLEANUP STAGE (MANUAL)
+############################
+
+terraform_destroy:
+  stage: cleanup
+  image: hashicorp/terraform:latest
+  when: manual
+  script:
+    - cd $TF_ROOT
+    - terraform init -input=false
+    - terraform destroy -var="region=$AWS_DEFAULT_REGION" -auto-approve
