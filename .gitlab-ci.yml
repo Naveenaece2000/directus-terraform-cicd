@@ -1,32 +1,168 @@
-image:
-  name: hashicorp/terraform:latest
-  entrypoint: [""]
+image: hashicorp/terraform:latest
 
 stages:
   - validate
   - plan
-  - apply
+  - provision
+  - deploy
+  - test
+  - cleanup
 
-before_script:
-  - cd terraform
-  - terraform init
-
-validate:
+# ---------------------------
+# Validate Stage
+# ---------------------------
+terraform_validate:
   stage: validate
+  image: hashicorp/terraform:latest
   script:
+    - cd terraform
+    - terraform init
+    - terraform fmt -check
     - terraform validate
+  artifacts:
+    paths:
+      - terraform/validate_report.txt
+    expire_in: 1 hour
 
-plan:
-  stage: plan
+terraform_lint:
+  stage: validate
+  image: ghcr.io/terraform-linters/tflint:latest
   script:
-    - terraform plan
+    - cd terraform
+    - tflint
+  artifacts:
+    paths:
+      - terraform/lint_report.txt
+    expire_in: 1 hour
+
+docker_validate:
+  stage: validate
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker compose -f docker-compose.yml config
+  artifacts:
+    paths:
+      - docker-compose.yml
+    expire_in: 1 hour
+
+# ---------------------------
+# Plan Stage
+# ---------------------------
+terraform_plan:
+  stage: plan
+  image: hashicorp/terraform:latest
+  script:
+    - cd terraform
+    - terraform init
+    - terraform plan -out=tfplan
+  artifacts:
+    paths:
+      - terraform/tfplan
+    expire_in: 1 hour
   only:
     - main
 
+# ---------------------------
+# Provision Stage (Manual)
+# ---------------------------
 terraform_apply:
-  stage: apply
+  stage: provision
+  image: hashicorp/terraform:latest
   script:
+    - cd terraform
+    - terraform init
     - terraform apply -auto-approve
+    # Save server IP and private key to files for deploy stage
+    - terraform output -raw instance_ip > ../server_ip.txt
+    - terraform output -raw private_key > ../ssh_key.pem
+    - chmod 600 ../ssh_key.pem
+  artifacts:
+    paths:
+      - server_ip.txt
+      - ssh_key.pem
+    expire_in: 1 hour
+  when: manual
+  only:
+    - main
+
+# ---------------------------
+# Deploy Stage
+# ---------------------------
+deploy_directus:
+  stage: deploy
+  image: alpine:latest
+  dependencies:
+    - terraform_apply
+  before_script:
+    - apk add --no-cache openssh-client bash
+  script:
+    - echo "Deploying Directus via SSH..."
+    - chmod 600 ssh_key.pem
+    - ssh -o StrictHostKeyChecking=no -i ssh_key.pem ubuntu@$(cat server_ip.txt) 'mkdir -p directus'
+    - scp -o StrictHostKeyChecking=no -i ssh_key.pem docker-compose.yml ubuntu@$(cat server_ip.txt):~/directus/
+    # Generate .env on server from GitLab CI/CD variables
+    - ssh -i ssh_key.pem ubuntu@$(cat server_ip.txt) "cat > ~/directus/.env <<EOF
+ADMIN_EMAIL=$ADMIN_EMAIL
+ADMIN_PASSWORD=$ADMIN_PASSWORD
+DB_PASSWORD=$DB_PASSWORD
+DIRECTUS_SECRET=$DIRECTUS_SECRET
+EOF"
+    # Run Docker Compose
+    - ssh -i ssh_key.pem ubuntu@$(cat server_ip.txt) "cd ~/directus && docker compose up -d"
+  artifacts:
+    paths:
+      - deploy_log.txt
+    expire_in: 1 hour
+
+# ---------------------------
+# Test Stage
+# ---------------------------
+health_check:
+  stage: test
+  image: curlimages/curl:latest
+  dependencies:
+    - deploy_directus
+  script:
+    - curl -s -o /dev/null -w "%{http_code}" http://$(cat server_ip.txt):8055
+
+capture_homepage:
+  stage: test
+  image: curlimages/curl:latest
+  dependencies:
+    - deploy_directus
+  script:
+    - curl http://$(cat server_ip.txt):8055 -o directus_homepage.html
+  artifacts:
+    paths:
+      - directus_homepage.html
+    expire_in: 1 hour
+
+generate_report:
+  stage: test
+  image: alpine:latest
+  dependencies:
+    - deploy_directus
+  script:
+    - echo "Deployment Report" > deployment_report.md
+    - echo "Server IP: $(cat server_ip.txt)" >> deployment_report.md
+    - echo "Pipeline Status: Success" >> deployment_report.md
+  artifacts:
+    paths:
+      - deployment_report.md
+    expire_in: 1 hour
+
+# ---------------------------
+# Cleanup Stage (Manual)
+# ---------------------------
+terraform_destroy:
+  stage: cleanup
+  image: hashicorp/terraform:latest
+  script:
+    - cd terraform
+    - terraform init
+    - terraform destroy -auto-approve
   when: manual
   only:
     - main
