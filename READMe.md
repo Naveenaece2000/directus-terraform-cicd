@@ -172,14 +172,14 @@ Test stage verifies Directus accessibility
 ```
 ```
 
-🌐 Live Deployment
+🌐 **Live Deployment:**
 
 After pipeline completion, Directus will be available at:
 
 http://<public-ip>:8055
 
 ```
-```
+
 
 
 
