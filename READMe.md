@@ -139,6 +139,7 @@ output "instance_id" {
 }
 
 ---
+---
 
 📥 Deployment Instructions
 1️⃣ Setup AWS Credentials
@@ -176,6 +177,7 @@ After pipeline completion, Directus will be available at:
 http://<public-ip>:8055
 
 ---
+
 
 
 
