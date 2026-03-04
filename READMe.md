@@ -138,8 +138,8 @@ output "instance_id" {
   value = aws_instance.directus_server.id
 }
 
----
----
+```
+```
 
 📥 Deployment Instructions
 1️⃣ Setup AWS Credentials
@@ -154,7 +154,8 @@ ADMIN_PASSWORD
 DB_PASSWORD
 DIRECTUS_SECRET
 
----
+```
+```
 
 2️⃣ Run the Pipeline
 
@@ -168,7 +169,8 @@ Deploy runs automatically
 
 Test stage verifies Directus accessibility
 
----
+```
+```
 
 🌐 Live Deployment
 
@@ -176,7 +178,8 @@ After pipeline completion, Directus will be available at:
 
 http://<public-ip>:8055
 
----
+```
+```
 
 
 
