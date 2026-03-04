@@ -141,8 +141,8 @@ output "instance_id" {
 ```
 ```
 
-📥 Deployment Instructions
-1️⃣ Setup AWS Credentials
+##📥 Deployment Instructions
+###1️⃣ Setup AWS Credentials
 
 Add the following GitLab CI/CD variables:
 
@@ -157,7 +157,7 @@ DIRECTUS_SECRET
 ```
 ```
 
-2️⃣ Run the Pipeline
+###2️⃣ Run the Pipeline
 
 When you push your branch:
 
@@ -172,13 +172,14 @@ Test stage verifies Directus accessibility
 ```
 ```
 
-🌐 **Live Deployment:**
+##🌐 Live Deployment:
 
 After pipeline completion, Directus will be available at:
 
 http://<public-ip>:8055
 
 ```
+
 
 
 
