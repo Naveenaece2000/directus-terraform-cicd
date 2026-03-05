@@ -145,7 +145,6 @@ output "instance_id" {
 
 Add the following GitLab CI/CD variables:
 
-|------------|
 |AWS_ACCESS_KEY_ID|
 |AWS_SECRET_ACCESS_KEY|
 |AWS_DEFAULT_REGION|
@@ -155,10 +154,11 @@ Add the following GitLab CI/CD variables:
 |DIRECTUS_SECRET|
 
 ```
+```
 
-### 2️⃣ Run the Pipeline
+### 2️⃣ Run the Pipeline:
 
-When you push your branch:
+When you push your branch
 
 Pipeline runs validate & plan automatically
 
@@ -168,6 +168,7 @@ Deploy runs automatically
 
 Test stage verifies Directus accessibility
 
+```
 ```
 
 ## 🌐 Live Deployment:
@@ -184,6 +185,7 @@ http://13.201.227.4/
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(124).png?raw=true)
 
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
+
 
 
 
