@@ -200,7 +200,7 @@ http://13.201.227.4/
 
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(135).png?raw=true)
 
-```
+
 
 
 
