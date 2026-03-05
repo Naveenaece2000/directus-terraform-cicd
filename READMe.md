@@ -177,8 +177,16 @@ Test stage verifies Directus accessibility
 After pipeline completion, Directus will be available at:
 
 http://<public-ip>:8055
+http://13.201.227.4/
 
 ```
+```
+### Screenshots:
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/3992864b25cabc04cd8443f8bcd98a3b5eb4aae3/Screenshot%20(124).png)
+
+
+
 
 
 
