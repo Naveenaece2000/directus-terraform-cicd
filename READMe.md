@@ -154,7 +154,6 @@ DB_PASSWORD
 DIRECTUS_SECRET
 
 ```
-```
 
 ### 2️⃣ Run the Pipeline
 
@@ -169,7 +168,6 @@ Deploy runs automatically
 Test stage verifies Directus accessibility
 
 ```
-```
 
 ## 🌐 Live Deployment:
 
@@ -180,11 +178,13 @@ http://13.201.227.4/
 
 ```
 ```
-### Screenshots:
+
+## 🌟 Screenshots:
 
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(124).png?raw=true)
 
-![image alt}(https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
+
 
 
 
