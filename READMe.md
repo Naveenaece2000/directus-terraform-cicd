@@ -145,13 +145,14 @@ output "instance_id" {
 
 Add the following GitLab CI/CD variables:
 
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_DEFAULT_REGION
-ADMIN_EMAIL
-ADMIN_PASSWORD
-DB_PASSWORD
-DIRECTUS_SECRET
+|------------|
+|AWS_ACCESS_KEY_ID|
+|AWS_SECRET_ACCESS_KEY|
+|AWS_DEFAULT_REGION|
+|ADMIN_EMAIL|
+|ADMIN_PASSWORD|
+|DB_PASSWORD|
+|DIRECTUS_SECRET|
 
 ```
 
@@ -173,7 +174,6 @@ Test stage verifies Directus accessibility
 
 After pipeline completion, Directus will be available at:
 
-http://<public-ip>:8055
 http://13.201.227.4/
 
 ```
@@ -184,6 +184,7 @@ http://13.201.227.4/
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(124).png?raw=true)
 
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
+
 
 
 
