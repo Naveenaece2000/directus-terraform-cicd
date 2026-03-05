@@ -139,10 +139,9 @@ output "instance_id" {
 }
 
 ```
-```
 
-##📥 Deployment Instructions
-###1️⃣ Setup AWS Credentials
+## 📥 Deployment Instructions:
+### 1️⃣ Setup AWS Credentials:
 
 Add the following GitLab CI/CD variables:
 
@@ -157,7 +156,7 @@ DIRECTUS_SECRET
 ```
 ```
 
-###2️⃣ Run the Pipeline
+### 2️⃣ Run the Pipeline
 
 When you push your branch:
 
@@ -172,7 +171,7 @@ Test stage verifies Directus accessibility
 ```
 ```
 
-##🌐 Live Deployment:
+## 🌐 Live Deployment:
 
 After pipeline completion, Directus will be available at:
 
@@ -183,7 +182,10 @@ http://13.201.227.4/
 ```
 ### Screenshots:
 
-![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/3992864b25cabc04cd8443f8bcd98a3b5eb4aae3/Screenshot%20(124).png)
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(124).png?raw=true)
+
+![image alt}(https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
+
 
 
 
