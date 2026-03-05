@@ -186,6 +186,27 @@ http://13.201.227.4/
 
 ![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(125).png?raw=true)
 
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(126).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(127).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(128).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(129).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(131).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(134).png?raw=true)
+
+![image alt](https://github.com/Naveenaece2000/directus-terraform-cicd/blob/main/Screenshot%20(135).png?raw=true)
+
+```
+
+
+
+
+
+
 
 
 
